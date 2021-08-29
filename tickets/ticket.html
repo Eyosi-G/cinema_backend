@@ -1,0 +1,79 @@
+<html>
+  <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,300;0,400;1,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Source Sans Pro;
+      }
+
+      .ticket-wrapper {
+        margin: 20px;
+        height: fit-content;
+        width: fit-content;
+        padding: 5px;
+      }
+      .ticket-container {
+        padding: 10px;
+        border: 1px dashed black;
+      }
+      .ticket-code {
+        margin: 0px 10px;
+        text-align: center;
+        height: 100%;
+      }
+      .ticket-content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+
+      .title {
+        font-weight: bold;
+        font-size: small;
+        text-align: center;
+      }
+      .sub-title {
+        color: #c8c9ca;
+        font-size: small;
+        text-align: center;
+      }
+      .price {
+        align-self: center;
+        transform: rotate(-90deg);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ticket-wrapper">
+      <div class="ticket-container">
+        <p class="title">{{title}}&nbsp;|&nbsp;{{screen}}</p>
+        <p class="sub-title">{{showDataTime}}</p>
+        <div style="margin-top: 10px"></div>
+        <div style="display: flex; justify-content: center">
+          <div>
+            <p class="title">Seats</p>
+            <p class="sub-title">{{seats}}</p>
+          </div>
+          <div style="margin-right: 15px"></div>
+          <div>
+            <p class="title">Hall</p>
+            <p class="sub-title">{{hallName}}</p>
+          </div>
+        </div>
+        <div style="margin-top: 10px"></div>
+        <div class="ticket-code">
+          <img src="{{image}}" />
+        </div>
+        <p class="sub-title">{{price}}&nbsp;ETB</p>
+      </div>
+    </div>
+  </body>
+</html>
