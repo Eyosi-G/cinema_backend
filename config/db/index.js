@@ -9,4 +9,7 @@ mongoose
     useFindAndModify: false,
   })
   .then((data) => console.log("database connection success"))
-  .catch((err) => console.log("database connection failed"));
+  .catch((err) => {
+    console.log(err);
+    console.log("database connection failed");
+  });
