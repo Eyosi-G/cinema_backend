@@ -4,6 +4,8 @@ const common = {
 };
 const config = {
   dbName: process.env.DB_NAME,
+  dbUser: process.env.DB_USER,
+  dbPassword: process.env.DB_PASSWORd,
   key: process.env.key,
   principal: process.env.HC_PRINCIPAL,
   credentials: process.env.HC_CREDENTIALS,
