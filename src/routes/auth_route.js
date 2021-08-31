@@ -5,6 +5,7 @@ const config = require("../../config");
 const AppError = require("../utils/appError");
 router.post("/login", async (req, res, next) => {
   try {
+    console.log(req.body)
     const { password, username } = req.body;
     const user = await UserModel.findOne({ username: username });
     if (user.isPasswordCorrect(password)) {
