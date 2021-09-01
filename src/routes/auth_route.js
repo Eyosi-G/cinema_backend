@@ -3,7 +3,8 @@ const jwt = require("../utils/jwt");
 const { UserModel } = require("../models/user");
 const config = require("../../config");
 const AppError = require("../utils/appError");
-router.post("/login", async (req, res, next) => {
+const auth = require("../middlewares/auth");
+const login = async (req, res, next) => {
   try {
     const { password, username } = req.body;
     const user = await UserModel.findOne({ username: username });
@@ -15,6 +16,23 @@ router.post("/login", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
+const changePassword = async (req, res, next) => {
+  try {
+    const user = req.user;
+    const { oldPassword, newPassword } = req.body;
+    if (user.isPasswordCorrect(oldPassword)) {
+      user.password = newPassword;
+      await user.save();
+      return res.status(200).end();
+    }
+    throw new AppError(401, "old password is incorrect");
+  } catch (error) {
+    next(error);
+  }
+};
+
+router.post("/login", login);
+router.patch("/password", auth.validateUser, changePassword);
 
 module.exports = router;

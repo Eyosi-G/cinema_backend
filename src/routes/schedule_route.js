@@ -77,7 +77,7 @@ const createSchedule = async (req, res, next) => {
 
 const getNowWatching = async (req, res, next) => {
   try {
-    const query = { start_date_time: { $gt: new Date().toISOString() } };
+    const query = { start_date_time: { $gt: new Date().toISOString() } , status:"active"};
     const movies = filterSchedules(await schedule.SheduleModel.find(query));
     const moviesLength = movies.length;
     const limit = Number(req.query.limit) || moviesLength;

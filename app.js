@@ -9,7 +9,9 @@ const scheduleRoute = require("./src/routes/schedule_route");
 const errorHandler = require("./src/middlewares/error_handler");
 const paymentRoute = require("./src/routes/payment_route");
 const authRoute = require("./src/routes/auth_route");
-const dashboardRoute = require('./src/routes/dashboard_route')
+const dashboardRoute = require("./src/routes/dashboard_route");
+const ticketRoute = require("./src/routes/ticket_route");
+
 const app = express();
 const port = process.env.PORT || 8080;
 app.use(logger);
@@ -22,7 +24,8 @@ app.use("/api/v1", genreRoute);
 app.use("/api/v1", cinemaRoute);
 app.use("/api/v1", scheduleRoute);
 app.use("/api/v1", paymentRoute);
-app.use('/api/v1',dashboardRoute)
+app.use("/api/v1", dashboardRoute);
+app.use("/api/v1", ticketRoute);
 app.use(errorHandler);
 app.listen(port, () => {
   console.log(`server started on port ${port} ...`);
