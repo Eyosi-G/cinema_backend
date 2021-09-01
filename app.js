@@ -18,7 +18,7 @@ const port = process.env.PORT || 8080;
 app.use(logger);
 app.use(cors());
 app.use(express.json());
-app.use(app.use(express.static(path.join(__dirname, "build"))));
+app.use(express.static(path.join(__dirname, "build")));
 app.use("/api/v1/images", express.static(`uploads`));
 app.use("/api/v1", authRoute);
 app.use("/api/v1", movieRoute);
@@ -28,6 +28,9 @@ app.use("/api/v1", scheduleRoute);
 app.use("/api/v1", paymentRoute);
 app.use("/api/v1", dashboardRoute);
 app.use("/api/v1", ticketRoute);
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
+});
 app.use(errorHandler);
 app.listen(port, () => {
   console.log(`server started on port ${port} ...`);
