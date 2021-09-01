@@ -1,4 +1,5 @@
 require("./config/db");
+const path = require("path");
 const express = require("express");
 const cors = require("cors");
 const logger = require("./src/middlewares/logger");
@@ -17,6 +18,7 @@ const port = process.env.PORT || 8080;
 app.use(logger);
 app.use(cors());
 app.use(express.json());
+app.use(app.use(express.static(path.join(__dirname, "build"))));
 app.use("/api/v1/images", express.static(`uploads`));
 app.use("/api/v1", authRoute);
 app.use("/api/v1", movieRoute);

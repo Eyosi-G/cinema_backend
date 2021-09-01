@@ -4,6 +4,7 @@
   "description": "cinema backend",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "startDev": "nodemon app.js",
     "seedGenres": "node src/seeders/seed-genres.js",
     "createAdmin": "node src/seeders/seed-admin.js"
