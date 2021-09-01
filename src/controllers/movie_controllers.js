@@ -5,10 +5,10 @@ const getMovies = async (req, res, next) => {
     const limit = req.query.limit ? Number(req.query.limit) : 0;
     const page = req.query.page ? Number(req.query.page) : 0;
     const name = req.query.name || false;
-    const released = req.query.released || false;
+    const commingsoon = req.query.commingsoon || false;
     const query = {};
     if (name) query.title = new RegExp(`${name}`, "i");
-    if (released) query.comming_soon = false;
+    if (commingsoon) query.comming_soon = true;
 
     const totalMovies = await movieModel.countDocuments(query);
     const paginated = await movieModel
