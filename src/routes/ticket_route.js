@@ -1,6 +1,8 @@
 const router = require("express").Router();
 const { TicketModel } = require("../models/ticket");
-router.get("/tickets", async (req, res, next) => {
+const crypto = require("crypto");
+const auth = require("../middlewares/auth");
+const getTickets = async (req, res, next) => {
   try {
     const page = Number(req.query.page) || 0;
     const limit = Number(req.query.limit) || 0;
@@ -30,6 +32,45 @@ router.get("/tickets", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+};
+const getTicketByCode = async (req, res, next) => {
+  try {
+    const { code } = req.body;
+    const hashedCode = crypto
+      .createHash("md5")
+      .update(code.trim())
+      .digest("hex");
+    const ticket = await TicketModel.findOne({ code: hashedCode });
+    res.json(ticket);
+  } catch (error) {
+    next(error);
+  }
+};
 
+const approveTicket =   async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const ticket = await TicketModel.findByIdAndUpdate(
+      id,
+      {
+        approved: true,
+        approvedBy: req.user.username,
+      },
+      { new: true }
+    );
+    res.json(ticket);
+  } catch (error) {
+    next(error);
+  }
+}
+
+router.get("/tickets", auth.validateUser, auth.isAdmin, getTickets);
+router.post("/tickets", auth.validateUser,  auth.isTicketer, getTicketByCode);
+router.patch(
+  "/tickets/:id/approve",
+  auth.validateUser,
+  auth.isTicketer,
+  approveTicket
+
+);
 module.exports = router;

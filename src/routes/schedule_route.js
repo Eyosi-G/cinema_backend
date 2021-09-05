@@ -5,7 +5,7 @@ const { v4 } = require("uuid");
 const jwt = require("../utils/jwt");
 const config = require("../../config");
 const mongoose = require("mongoose");
-
+const auth = require('../middlewares/auth')
 const filterSchedules = (schedules) => {
   const filteredSchedules = {};
   schedules.forEach((schedule) => {
@@ -127,23 +127,23 @@ const reserveSeats = async (req, res, next) => {
     const response = await schedule.SheduleModel.findById(id);
     if (!isSeatTaken(response.taken_seats, selectedSeats)) {
       const user = v4();
-      const checkoutId = mongoose.Types.ObjectId();
+      const reservedSeatId = mongoose.Types.ObjectId();
       const seat = {
         seats: [...selectedSeats],
         owner: user,
-        _id: checkoutId,
+        _id: reservedSeatId,
       };
       response.taken_seats.push(seat);
       await response.save();
       const token = await jwt.createToken(
-        { owner: user, checkoutId, scheduleId: id },
+        { owner: user, reservedSeatId, scheduleId: id },
         config.key
       );
       return res.json({
         token: token,
         owner: user,
         scheduleId: id,
-        checkoutId,
+        reservedSeatId,
       });
     }
     throw new AppError(401, "seats already taken");
@@ -158,17 +158,17 @@ const getCheckout = async (req, res, next) => {
       req.headers.authorization,
       config.key
     );
-    const { owner, checkoutId, scheduleId } = decoded;
+    const { owner, reservedSeatId, scheduleId } = decoded;
     const response = await schedule.SheduleModel.findById(scheduleId);
-    const checkout = response.taken_seats.id(checkoutId);
-    if (config.min - Math.abs((new Date() - checkout.start_date) / 60000) > 0) {
+    const researvedSeat = response.taken_seats.id(reservedSeatId);
+    if (config.min - Math.abs((new Date() - researvedSeat.start_date) / 60000) > 0) {
       const body = {};
       body.movie = response.movie;
-      body.checkout = checkout;
+      body.checkout = researvedSeat;
       body.scheduleDate = response.start_date_time;
       body.screen = response.screen;
       body.totalPrice = calculateTotalPrice(
-        checkout.seats,
+        researvedSeat.seats,
         response.hall.seats.grid,
         response.price.vip,
         response.price.regular
@@ -215,11 +215,11 @@ const cancelReservation = async (req, res, next) => {
       req.headers.authorization,
       config.key
     );
-    const { owner, checkoutId, scheduleId } = decoded;
+    const { owner, reservedSeatId, scheduleId } = decoded;
     const response = await schedule.SheduleModel.findById(scheduleId);
-    const checkout = response.taken_seats.id(checkoutId);
-    if (checkout.owner == owner && !checkout.paid) {
-      response.taken_seats.pull(checkoutId);
+    const researvedSeat = response.taken_seats.id(reservedSeatId);
+    if (researvedSeat.owner == owner && !researvedSeat.paid) {
+      response.taken_seats.pull(reservedSeatId);
       await response.save();
       return res.status(200).end();
     }
@@ -230,9 +230,9 @@ const cancelReservation = async (req, res, next) => {
 };
 
 router.get("/schedules", getSchedules);
-router.post("/schedules", createSchedule);
-router.put("/schedules", editSchedule);
-router.delete("/schedules/:id", deleteSchedule);
+router.post("/schedules", auth.validateUser, auth.isAdmin, createSchedule);
+router.put("/schedules", auth.validateUser,auth.isAdmin, editSchedule);
+router.delete("/schedules/:id", auth.validateUser, auth.isAdmin, deleteSchedule);
 router.get("/schedules/movies/now-watching", getNowWatching);
 router.get("/schedules/:id", getSingleSchedule);
 router.put("/schedules/:id/checkout", reserveSeats);

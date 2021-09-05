@@ -11,15 +11,18 @@ const paymentRoute = require("./src/routes/payment_route");
 const authRoute = require("./src/routes/auth_route");
 const dashboardRoute = require("./src/routes/dashboard_route");
 const ticketRoute = require("./src/routes/ticket_route");
-
+const userRoute = require("./src/routes/user-routes");
 const app = express();
 const port = process.env.PORT || 8080;
 app.use(logger);
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 app.use("/api/v1/images", express.static(`uploads`));
 app.use("/api/v1", authRoute);
 app.use("/api/v1", movieRoute);
+app.use("/api/v1", userRoute);
 app.use("/api/v1", genreRoute);
 app.use("/api/v1", cinemaRoute);
 app.use("/api/v1", scheduleRoute);
