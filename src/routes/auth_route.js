@@ -22,6 +22,7 @@ const changePassword = async (req, res, next) => {
   try {
     const user = req.user;
     const { oldPassword, newPassword } = req.body;
+    console.log(req.body);
     if (user.isPasswordCorrect(oldPassword)) {
       user.password = newPassword;
       await user.save();

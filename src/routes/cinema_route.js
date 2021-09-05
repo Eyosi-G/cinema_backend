@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const { CinemaHallModel } = require("../models/cinema_hall");
+const auth = require('../middlewares/auth');
 const createCinema = async (req, res, next) => {
   try {
     const cinema = await CinemaHallModel.create(req.body);
@@ -42,12 +43,7 @@ const getSingleCinema = async (req, res, next) => {
     next(error);
   }
 };
-
-router.delete("/cinemas/:id", deleteCinema);
-router.get("/cinemas", getCinemas);
-router.post("/cinemas", createCinema);
-router.get("/cinemas/:id", getSingleCinema);
-router.put("/cinemas", async (req, res, next) => {
+const updateCinema =  async (req, res, next) => {
   try {
     const cinemaID = req.body.cinemaID;
     const cinema = await CinemaHallModel.findByIdAndUpdate(cinemaID, req.body, {
@@ -57,5 +53,11 @@ router.put("/cinemas", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});
+}
+
+router.delete("/cinemas/:id", auth.validateUser,auth.isAdmin, deleteCinema);
+router.get("/cinemas",auth.validateUser, auth.isAdmin, getCinemas);
+router.post("/cinemas", auth.validateUser, auth.isAdmin, createCinema);
+router.get("/cinemas/:id",auth.validateUser, auth.isAdmin, getSingleCinema);
+router.put("/cinemas",auth.validateUser, auth.isAdmin, updateCinema);
 module.exports = router;

@@ -1,5 +1,5 @@
 const roles = {
     admin:"ADMIN",
-    ticket_taker:"TICKET_TAKER"
+    ticketer:"TICKETER"
 }
 module.exports = roles

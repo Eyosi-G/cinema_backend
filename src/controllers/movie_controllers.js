@@ -1,5 +1,6 @@
 const { movieModel } = require("../models/movie");
 const { SheduleModel } = require("../models/schedule");
+const fs = require("fs");
 const getMovies = async (req, res, next) => {
   try {
     const limit = req.query.limit ? Number(req.query.limit) : 0;
@@ -24,6 +25,10 @@ const getMovies = async (req, res, next) => {
 const deleteMovie = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const movie = await movieModel.findById(id);
+    fs.unlink(`${__dirname}/../../uploads/${movie.cover_image}`, (err) => {
+      if (!err) console.log("image deleted");
+    });
     await movieModel.findByIdAndDelete(id);
     res.status(200).end();
   } catch (error) {
@@ -53,6 +58,10 @@ const updateMovie = async (req, res, next) => {
     if (summary) body.summary = summary;
     if (language) body.language = language;
     if (req.file) body.cover_image = req.file.filename;
+    const movie = await movieModel.findById(movieId);
+    fs.unlink(`${__dirname}/../../uploads/${movie.cover_image}`, (err) => {
+      if (!err) console.log("image deleted");
+    });
     const response = await movieModel.findByIdAndUpdate(
       movieId,
       {
