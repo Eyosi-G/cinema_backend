@@ -3,6 +3,7 @@ const movieControllers = require("../controllers/movie_controllers");
 const multer = require('multer')
 const path = require("path");
 const {v4} = require('uuid')
+const auth = require('../middlewares/auth');
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -20,8 +21,8 @@ const upload = multer({
   fileFilter: (req, file, cb) => {
     const fileTypes = new RegExp("jpeg|jpg|png|gif", "i");
     const ext = path.extname(file.originalname).toLowerCase();
-    const mimetype = fileTypes.test(file.mimetype);
-    if (mimetype && ext) {
+    const mimetype = fileTypes.test(ext);
+    if (mimetype) {
       return cb(null, true);
     } else {
       cb("image only");
@@ -31,16 +32,20 @@ const upload = multer({
 
 router.post(
   "/movies",
+  auth.validateUser,
+  auth.isAdmin,
   upload.single("cover_image"),
   movieControllers.createMovie
 );
 router.get("/movies/:id", movieControllers.getSingleMovie);
 router.put(
   "/movies",
+  auth.validateUser,
+  auth.isAdmin,
   upload.single("cover_image"),
   movieControllers.updateMovie
 );
 router.get("/movies", movieControllers.getMovies);
-router.delete("/movies/:id", movieControllers.deleteMovie);
+router.delete("/movies/:id",auth.validateUser, auth.isAdmin, movieControllers.deleteMovie);
 router.get("/movies/:id/detail", movieControllers.getMovieDetail);
 module.exports = router;

@@ -2,7 +2,8 @@ const router = require("express").Router();
 const { CinemaHallModel } = require("../models/cinema_hall");
 const { movieModel } = require("../models/movie");
 const { TicketModel } = require("../models/ticket");
-router.get("/dashboard", async (req, res, next) => {
+const auth  = require('../middlewares/auth')
+getDashboardData = async (req, res, next) => {
   try {
     const cinemas = await CinemaHallModel.countDocuments();
     const movies = await movieModel.countDocuments();
@@ -15,6 +16,8 @@ router.get("/dashboard", async (req, res, next) => {
   } catch (e) {
     next(e);
   }
-});
+}
+
+router.get("/dashboard", auth.validateUser, auth.isAdmin, getDashboardData );
 
 module.exports = router;

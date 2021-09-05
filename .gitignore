@@ -1,3 +1,4 @@
 .env
 scratch.js
 /node_modules
+/tickets/
