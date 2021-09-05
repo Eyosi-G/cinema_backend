@@ -6,6 +6,7 @@ const AppError = require("../utils/appError");
 const auth = require("../middlewares/auth");
 const login = async (req, res, next) => {
   try {
+    console.log(req.body)
     const { password, username } = req.body;
     const user = await UserModel.findOne({ username: username });
     if (user.isPasswordCorrect(password)) {
