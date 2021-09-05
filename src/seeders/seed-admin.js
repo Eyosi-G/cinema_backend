@@ -4,6 +4,6 @@ const user = require("../models/user");
 
 user.UserModel.create({
   username: "Eyo.siyas",
-  password: "Eyo.siyas#11",
+  password: "password",
   roles: [roles.admin],
 }).then((data)=>console.log('admin created !'))
