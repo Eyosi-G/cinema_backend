@@ -12,6 +12,7 @@ const TicketSchema = new mongoose.Schema(
     screen: { type: String, requried: true },
     code: { type: String, required: true },
     movie: { type: movie.movieSchema, required: true },
+    email: {type: String, required: true},
     seats: {
       type: [
         {

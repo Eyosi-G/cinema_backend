@@ -1,19 +1,46 @@
-const nodemailer = require("nodemailer");
 const config = require("../../config");
-const hbs = require("nodemailer-express-handlebars");
-const path = require("path");
-let transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  service: "gmail",
-  auth: {
-    user: config.mailerEmail,
-    pass: config.mailerPassword,
-  },
-});
+const nodemailer = require("nodemailer");
+const { google } = require("googleapis");
+
+const createTransport = async() => {
+  const playGround = "https://developers.google.com/oauthplayground";
+  const OAuth2 = google.auth.OAuth2;
+
+  const oauthClient = new OAuth2(
+    config.oAuthClientId,
+    config.oAuthClientSecret,
+    playGround
+  );
+
+  oauthClient.setCredentials({
+    refresh_token: config.oAuthRefreshToken,
+  });
+
+  const accessToken = await new Promise((resolve, reject) => {
+    oauthClient.getAccessToken((err, token) => {
+      if (err) {
+        reject("Failed to create access token :(");
+      }
+      resolve(token);
+    });
+  });
+  const transport = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      type: "OAuth2",
+      user: config.mailerEmail,
+      clientId: config.oAuthClientId,
+      clientSecret: config.oAuthClientSecret,
+      refreshToken: config.oAuthRefreshToken,
+      accessToken: accessToken,
+    },
+  });
+
+  return transport;
+};
 
 const sendEmail = async ({ emailTo, subject, code, image, ticket }) => {
+  const transporter = await createTransport();
   await transporter.sendMail({
     from: config.mailerEmail,
     to: emailTo,
