@@ -6,6 +6,7 @@ const paymentSchema = new mongoose.Schema({
   scheduleId: {type: String, required:true},
   amount: { type: Number, required: true },
   paid: { type: Boolean, default: false },
+  start_date: { type: Date, required: true},
 });
 paymentSchema.options.toJSON = {
   transform: function (doc, ret, options) {

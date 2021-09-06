@@ -29,7 +29,8 @@ router.post("/ipn", async (req, res, next) => {
   const { MerchantOrderId } = req.body;
   const verify = await yenepay.verifyIPN(req.body);
   const paymentDoc = await payment.PaymentModel.findById(MerchantOrderId);
-  if (verify && paymentDoc && !paymentDoc.paid) {
+  const startDateTime = paymentDoc.start_date;
+  if (verify && paymentDoc && !paymentDoc.paid &&  config.min - Math.abs((new Date() - startDateTime) / 60000) > 0) {
     paymentDoc.paid = true;
     await paymentDoc.save();
     const reservedSeatId = paymentDoc.reservedSeatId;
@@ -56,6 +57,7 @@ router.post("/ipn", async (req, res, next) => {
       amount_paid: amountPaid,
       seats: seats,
       code: code,
+      email: email
     });
 
     const { image, template } = await generateContent({
@@ -73,7 +75,7 @@ router.post("/ipn", async (req, res, next) => {
       seats: seats.map((seat) => seat.seatName).toString(),
       total: `${amountPaid} ETB`,
     });
-    await sendEmail({
+    sendEmail({
       emailTo: email,
       code: code,
       image: image,
@@ -120,6 +122,7 @@ router.post("/invoices", async (req, res, next) => {
         reservedSeatId: reservedSeatId,
         scheduleId: scheduleId,
         amount: totalPrice,
+        start_data:reservedSeat.start_date
       });
       const checkoutRequest = await yenepay.generateCheckoutRequest(
         items,
