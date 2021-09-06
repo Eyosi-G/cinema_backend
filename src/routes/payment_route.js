@@ -122,7 +122,7 @@ router.post("/invoices", async (req, res, next) => {
         reservedSeatId: reservedSeatId,
         scheduleId: scheduleId,
         amount: totalPrice,
-        start_data:reservedSeat.start_date
+        start_date:reservedSeat.start_date
       });
       const checkoutRequest = await yenepay.generateCheckoutRequest(
         items,
