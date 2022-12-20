@@ -11,7 +11,6 @@ const generateContent = require("../utils/ticket");
 const sendEmail = require("../utils/email");
 const AppError = require("../utils/appError");
 const crypto = require("crypto");
-const pdf = require("html-pdf");
 
 const calculateTotalPrice = (seats, grid, vip, regular) => {
   let total = 0;
