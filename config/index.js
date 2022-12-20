@@ -19,11 +19,6 @@ const config = {
       verifyIPN: `${common.base_url}/verify/ipn `
     },
   },
-  mailerEmail:process.env.MAILER_EMIAL,
-  oAuthClientId: process.env.OAUTH_CLIENT_ID,
-  oAuthClientSecret: process.env.OAUTH_CLIENT_SECRET,
-  oAuthRefreshToken: process.env.OAUTH_REFRESH_TOKEN,
-  authKey:process.env.AUTH_KEY,
   saltFactor:Number(process.env.SALT_FACTOR),
 };
 module.exports = config;
